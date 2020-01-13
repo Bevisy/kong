@@ -24,7 +24,11 @@
 -- |[[    ]]|
 -- ==========
 
+--luarocks.loader source code
+--https://github.com/luarocks/luarocks/blob/master/src/luarocks/loader.lua
 pcall(require, "luarocks.loader")
+--resty.core source code
+--https://github.com/openresty/lua-resty-core
 require "resty.core"
 local constants = require "kong.constants"
 
