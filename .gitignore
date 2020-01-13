@@ -13,3 +13,6 @@ kong*.yml
 # luacov
 luacov.*
 /doc
+#
+_pgdata
+_deploy
