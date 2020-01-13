@@ -15,4 +15,4 @@ luacov.*
 /doc
 #
 _pgdata
-_deploy
+
