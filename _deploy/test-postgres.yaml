@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: test1-postgresql
+  name: test1-postgresql
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: test1-postgresql
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          value: kong
+        - name: POSTGRES_DB
+          value: kong
+        - name: POSTGRES_PASSWORD
+          value: cloudos
+        image: postgres:9.6
+        imagePullPolicy: IfNotPresent
+        name: postgres
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/localtime
+          name: localtime
+          readOnly: true
+        - mountPath: /var/lib/postgresql/data
+          name: pg-data
+      securityContext: {}
+      volumes:
+      - hostPath:
+          path: /etc/localtime
+          type: File
+        name: localtime
+      - hostPath:
+          path: /root/kong-1.0.0-deploy/pgdata
+          type: "DirectoryOrCreate"
+        name: pg-data
+
