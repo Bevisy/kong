@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test2-kong-migration
+  namespace: cutepuppy
+spec:
+  template:
+    metadata:
+      name: test2-kong-migration
+    spec:
+      containers:
+        - name: kong-migration
+          image: kong:1.0.0_mysql
+          env:
+            - name: KONG_NGINX_DAEMON
+              value: 'off'
+            - name: KONG_DATABASE
+              value: mysql
+            - name: KONG_MYSQL_USER
+              value: kong
+            - name: KONG_MYSQL_HOST
+              value: test2-mysql.cutepuppy.svc
+            - name: KONG_MYSQL_PASSWORD
+              value: ${PASSWORD}
+          command: [ "/bin/sh", "-c", "kong migrations bootstrap -vv" ]
+      restartPolicy: Never
+

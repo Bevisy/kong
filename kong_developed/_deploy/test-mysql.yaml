@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: test2-mysql
+  name: test2-mysql
+  namespace: cutepuppy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: test2-mysql
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_USER
+              value: kong
+            - name: POSTGRES_DB
+              value: kong
+            - name: MYSQL_ROOT_PASSWORD
+              value: ${PASSWORD}
+          image: mysql:5.7
+          imagePullPolicy: IfNotPresent
+          name: mysql
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
+              readOnly: true
+            - mountPath: /var/lib/mysql
+              name: mysql-data
+      securityContext: {}
+      volumes:
+        - hostPath:
+            path: /etc/localtime
+            type: File
+          name: localtime
+        - hostPath:
+            path: /root/kong-1.0.0-mysql-deploy/mysql
+            type: "DirectoryOrCreate"
+          name: mysql-data
