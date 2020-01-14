@@ -1,5 +1,6 @@
 local utils  = require "kong.tools.utils"
 local mysql = require "kong.tools.mysql"
+local pgmoon = require "pgmoon"
 
 
 local max          = math.max
@@ -23,7 +24,7 @@ INSERT INTO cluster_events(`id`, `node_id`, at, nbf, expire_at, channel, data)
 ]]
 
 local SELECT_INTERVAL_QUERY = [[
-SELECT `id`, `node_id`, channel, data, at, nbf
+SELECT `id`, `node_id`, channel, data, UNIX_TIMESTAMP(at) as at, UNIX_TIMESTAMP(nbf) as  nbf
 FROM cluster_events
 WHERE channel IN (%s)
   AND at >  FROM_UNIXTIME(%f)
