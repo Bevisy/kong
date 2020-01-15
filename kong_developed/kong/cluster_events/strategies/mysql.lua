@@ -76,7 +76,7 @@ function _M:select_interval(channels, min_at, max_at)
   local my_channels = new_tab(n_chans, 0)
 
   for i = 1, n_chans do
-    my_channels[i] = mysql.escape_literal(channels[i])
+    my_channels[i] = pgmoon.Postgres.escape_literal(nil, channels[i])
   end
 
   local q = fmt(SELECT_INTERVAL_QUERY, concat(my_channels, ","), min_at,
