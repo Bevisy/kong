@@ -238,7 +238,9 @@ local function flush_delayed_response(ctx)
                      ctx.delayed_response.headers)
 end
 
-
+--init_by_lua_block
+--用来完成耗时长的模块加载
+--或者初始化一些全局变量
 function Kong.init()
   -- special math.randomseed from kong.globalpatches not taking any argument.
   -- Must only be called in the init or init_worker phases, to avoid
@@ -379,7 +381,9 @@ local function list_migrations(migtable)
   return table.concat(list, " ")
 end
 
-
+--init_worker_by_lua_block
+--用于定时拉取配置/数据（启动一些定时任务）
+--有几个Nginx worker就有几个定时任务
 function Kong.init_worker()
   kong_global.set_phase(kong, PHASES.init_worker)
 
@@ -510,6 +514,8 @@ function Kong.init_worker()
   end
 end
 
+--ssl_certificate_by_lua_block
+--在Nginx和下游服务器之间开始一个SSL握手时处理
 function Kong.ssl_certificate()
   kong_global.set_phase(kong, PHASES.certificate)
 
@@ -531,6 +537,8 @@ function Kong.ssl_certificate()
   end
 end
 
+--balancer_by_lua_block
+--上游服务器中的负载均衡器
 function Kong.balancer()
   kong_global.set_phase(kong, PHASES.balancer)
 
@@ -628,6 +636,8 @@ function Kong.balancer()
   runloop.balancer.after(ctx)
 end
 
+--rewrite_by_lua_block
+--内部URL重写或者外部重定向
 function Kong.rewrite()
   kong_resty_ctx.stash_ref()
   kong_global.set_phase(kong, PHASES.rewrite)
@@ -684,6 +694,8 @@ function Kong.preread()
   runloop.preread.after(ctx)
 end
 
+--access_by_lua_block
+--访问控制
 function Kong.access()
   kong_global.set_phase(kong, PHASES.access)
 
@@ -720,6 +732,8 @@ function Kong.access()
   runloop.access.after(ctx)
 end
 
+--header_filter_by_lua_block
+--设置响应头
 function Kong.header_filter()
   kong_global.set_phase(kong, PHASES.header_filter)
 
@@ -740,6 +754,8 @@ function Kong.header_filter()
   runloop.header_filter.after(ctx)
 end
 
+--body_filter_by_lua_block
+--对响应数据进行过滤
 function Kong.body_filter()
   kong_global.set_phase(kong, PHASES.body_filter)
 
@@ -758,6 +774,8 @@ function Kong.body_filter()
   runloop.body_filter.after(ctx)
 end
 
+--log_by_lua_block
+--使用Lua处理日志
 function Kong.log()
   kong_global.set_phase(kong, PHASES.log)
 
@@ -776,6 +794,7 @@ function Kong.log()
   runloop.log.after(ctx)
 end
 
+--content_by_lua_block
 function Kong.handle_error()
   kong_resty_ctx.apply_ref()
 
@@ -792,6 +811,8 @@ function Kong.handle_error()
   return kong_error_handlers(ngx)
 end
 
+--content_by_lua_block
+--提供AdminAPI功能
 function Kong.serve_admin_api(options)
   kong_global.set_phase(kong, PHASES.admin_api)
 
