@@ -425,6 +425,18 @@ return {
       -- FOR EACH ROW
       -- CALL delete_expired_cluster_events();
 
+      -- set global event_scheduler = 1;
+      DROP EVENT IF EXISTS delete_expired_cluster_events_event;
+      CREATE EVENT delete_expired_cluster_events_event
+        ON SCHEDULE EVERY 1 HOUR
+        ON COMPLETION PRESERVE
+        DO
+        BEGIN
+          DELETE
+          FROM cluster_events
+          WHERE expire_at <= CURRENT_TIMESTAMP();
+        END;
+
 
       CREATE TABLE `services` (
       `id` varchar(50) PRIMARY KEY,
