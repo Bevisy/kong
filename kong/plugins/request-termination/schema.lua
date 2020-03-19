@@ -23,6 +23,8 @@ return {
           { content_type = { type = "string" }, },
           { body = { type = "string" }, },
         },
+        -- config.message 与 config.content_type 和 config.body 不能同时配置
+        -- config.content_type 必须与 config.body 同时配置
         custom_validator = function(config)
           if is_present(config.message)
           and(is_present(config.content_type)
