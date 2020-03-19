@@ -601,7 +601,7 @@ local function new(self, major_version)
   -- has a chance to proxy the request (e.g. an authentication plugin rejecting
   -- a request, or a caching plugin serving a cached response).
   --
-  -- It is recommended to use this function in conjunction with the `return`
+  -- It is recommended to use this function in conjunction(结合;关联) with the `return`
   -- operator, to better reflect its meaning:
   --
   -- ```lua
