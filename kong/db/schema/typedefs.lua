@@ -1,4 +1,4 @@
---- A library of ready-to-use type synonyms to use in schema definitions.
+--- A library of ready-to-use type synonyms(同义词；代名词) to use in schema definitions.
 -- @module kong.db.schema.typedefs
 local utils = require "kong.tools.utils"
 local openssl_pkey = require "openssl.pkey"
