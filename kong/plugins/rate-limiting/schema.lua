@@ -4,6 +4,7 @@ local typedefs = require "kong.db.schema.typedefs"
 local ORDERED_PERIODS = { "second", "minute", "hour", "day", "month", "year"}
 
 
+--校验：判断配置项数值设置，后项的数值不允许小于前项的数值
 local function validate_periods_order(config)
   for i, lower_period in ipairs(ORDERED_PERIODS) do
     local v1 = config[lower_period]

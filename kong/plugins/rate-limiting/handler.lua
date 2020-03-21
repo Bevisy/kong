@@ -79,10 +79,14 @@ end
 
 
 function RateLimitingHandler:access(conf)
+  --ngx.time() 返回当前nginx缓存的时间戳，单位为秒
+  --time() * 1000 返回单位以毫秒计算
+  --参考：https://github.com/openresty/lua-nginx-module#ngxtime
   local current_timestamp = time() * 1000
 
   -- Consumer is identified by ip address or authenticated_credential id
   local identifier = get_identifier(conf)
+  --fault_tolerant 容错
   local fault_tolerant = conf.fault_tolerant
 
   -- Load current metric for configured period
@@ -97,6 +101,9 @@ function RateLimitingHandler:access(conf)
 
   local usage, stop, err = get_usage(conf, identifier, current_timestamp, limits)
   if err then
+    --A boolean value that determines if the requests should be proxied even if Kong has troubles connecting a third-party datastore.
+    --If true requests will be proxied anyways effectively disabling the rate-limiting function until the datastore is working again.
+    --If false then the clients will see 500 errors.
     if fault_tolerant then
       kong.log.err("failed to get usage: ", tostring(err))
     else
@@ -116,8 +123,11 @@ function RateLimitingHandler:access(conf)
 
         headers[RATELIMIT_LIMIT .. "-" .. k] = v.limit
         headers[RATELIMIT_REMAINING .. "-" .. k] = max(0, v.remaining)
+        --kong.log.debug("[ZBB]: ".. RATELIMIT_LIMIT .. "-" .. k .. "=" .. headers[RATELIMIT_LIMIT .. "-" .. k])
+        --kong.log.debug("[ZBB]: " .. RATELIMIT_REMAINING .. "-" .. k .. "=" .. headers[RATELIMIT_REMAINING .. "-" .. k])
       end
 
+      --写入自定义的 headers
       kong.ctx.plugin.headers = headers
     end
 
@@ -136,6 +146,7 @@ function RateLimitingHandler:access(conf)
 end
 
 
+--设置返回的header：添加插件统计信息
 function RateLimitingHandler:header_filter(_)
   local headers = kong.ctx.plugin.headers
   if headers then
