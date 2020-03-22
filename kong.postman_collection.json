@@ -1,0 +1,675 @@
+{
+	"info": {
+		"_postman_id": "dbf7ff54-ad21-467d-89e6-18f8d77caee9",
+		"name": "kong",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "测试接口1",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://10.125.29.94:24101/status",
+					"protocol": "http",
+					"host": [
+						"10",
+						"125",
+						"29",
+						"94"
+					],
+					"port": "24101",
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "测试接口2",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://10.125.29.94:24101/services",
+					"protocol": "http",
+					"host": [
+						"10",
+						"125",
+						"29",
+						"94"
+					],
+					"port": "24101",
+					"path": [
+						"services"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "注册服务访问",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{proxy-port}}/exp1",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{proxy-port}}",
+					"path": [
+						"exp1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "注册服务访问（ssl）",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{ip}}:{{proxy-ssl-port}}/nginxtestssl",
+					"protocol": "https",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{proxy-ssl-port}}",
+					"path": [
+						"nginxtestssl"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "查询节点状态",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/status",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "查询全部服务",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "查询全部路由",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/routes",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"routes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "创建服务",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"example1\",\t\n\t\"url\": \"http://10.125.29.94:24101/status\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services/",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "创建服务（ssl）",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"test-nginx-ssl\",\t\n\t\"url\": \"https://10.125.29.15:18443/\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services/",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "添加路由",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"protocols\": [\"http\"],\n\t\"methods\": [\"GET\"],\n\t\"paths\": [\"/exp1\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services/example1/routes",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services",
+						"example1",
+						"routes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "添加路由（ssl）",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"paths\": [\"/nginxtestssl\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services/d7332c3e-e307-4dbc-b8da-60217fc053f0/routes",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services",
+						"d7332c3e-e307-4dbc-b8da-60217fc053f0",
+						"routes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "删除服务",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services/6af8bb88-e986-40be-ac70-82bc93ac3009",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services",
+						"6af8bb88-e986-40be-ac70-82bc93ac3009"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "删除路由",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/routes/90c26042-f096-4af3-b078-6ebb494aa85c",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"routes",
+						"90c26042-f096-4af3-b078-6ebb494aa85c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "查询全部插件",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/plugins",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"plugins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "查询全部可用插件",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/plugins/enabled",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"plugins",
+						"enabled"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "查询指定服务插件",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services/example1/plugins",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services",
+						"example1",
+						"plugins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "查询指定路由插件",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/routes/99662c9b-7923-40e8-8b51-b2a11567182a/plugins",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"routes",
+						"99662c9b-7923-40e8-8b51-b2a11567182a",
+						"plugins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "服务添加插件rate-limiting",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"rate-limiting\",\n\t\"config\": {\n\t\t\"second\": 2,\n\t\t\"minute\": 5,\n\t\t\"hour\": 100,\n\t\t\"policy\": \"local\"\n\t}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services/example1/plugins",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services",
+						"example1",
+						"plugins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "修改插件rate-limiting",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"config\": {\n\t\t\"second\": 2,\n\t\t\"minute\": 5,\n\t\t\"hour\": 100,\n\t\t\"policy\": \"cluster\"\n\t}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/plugins/ea0114d7-323d-4375-a085-ef8b9a93c2c2",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"plugins",
+						"ea0114d7-323d-4375-a085-ef8b9a93c2c2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "删除插件rate-limiting",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/plugins/ea0114d7-323d-4375-a085-ef8b9a93c2c2",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"plugins",
+						"ea0114d7-323d-4375-a085-ef8b9a93c2c2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "添加插件ip-restriction",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"ip-restriction\",\n\t\"config\": {\n\t\t\"whitelist\": [\"10.125.104.90\"]\n\t}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services/a9aed2a3-6ba4-4955-82d9-607ff2a64376/plugins",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services",
+						"a9aed2a3-6ba4-4955-82d9-607ff2a64376",
+						"plugins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "查询指定服务插件",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/services/a9aed2a3-6ba4-4955-82d9-607ff2a64376/plugins",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"services",
+						"a9aed2a3-6ba4-4955-82d9-607ff2a64376",
+						"plugins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "修改插件ip-restriction",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"config\": {\n\t\t\"whitelist\": [],\n\t\t\"blacklist\": [\"10.124.29.1\"]\n\t}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{admin-port}}/plugins/97408773-3897-4588-a850-4289d8e09e51",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{admin-port}}",
+					"path": [
+						"plugins",
+						"97408773-3897-4588-a850-4289d8e09e51"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/consumers/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "Jason",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{port}}/consumers/",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"consumers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/consumers/{cons name or id}/key-auth",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "key",
+							"value": "cloudos",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{ip}}:{{port}}/consumers/Jason/key-auth",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"consumers",
+						"Jason",
+						"key-auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ver key-auth",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Host",
+						"value": "example.com",
+						"type": "text"
+					},
+					{
+						"key": "apikey",
+						"value": "cloudos",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://{{ip}}:30110/",
+					"protocol": "http",
+					"host": [
+						"{{ip}}"
+					],
+					"port": "30110",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
