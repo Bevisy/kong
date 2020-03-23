@@ -5,6 +5,7 @@ local meta = require "kong.meta"
 local kong = kong
 local server_header = meta._SERVER_TOKENS
 
+-- 定义返回码对应的返回消息
 local DEFAULT_RESPONSE = {
   [401] = "Unauthorized",
   [404] = "Not found",
@@ -48,6 +49,7 @@ end
 local function filteringApiByHeaderOrBody(itemsBody, itemsHeader, currentBody, currentHeader)
 
   if not currentBody or not currentHeader then
+    kong.log.error("Request header and message body cannot be null at the same time")
     return false
   end
 
