@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kong-migr-zbb
+spec:
+  template:
+    metadata:
+      name: kong-migr-zbb
+    spec:
+      containers:
+        - name: kong-migration-zbb
+          image: {{KONG_1.0.0}}
+          env:
+            - name: KONG_NGINX_DAEMON
+              value: 'off'
+            - name: KONG_DATABASE
+              value: postgres
+            - name: KONG_PG_USER
+              value: kong
+            - name: KONG_PG_HOST
+              value: postgres-zbb.default.svc
+            - name: KONG_PG_PASSWORD
+              value: kong
+            - name: KONG_PG_PORT
+              value: '5432'
+          command: [ "/bin/sh", "-c", "kong migrations bootstrap -vv" ]
+      restartPolicy: Never

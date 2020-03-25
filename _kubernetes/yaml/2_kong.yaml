@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kong-zbb-svc
+spec:
+  type: NodePort
+  ports:
+    - name: kong-proxy
+      port: 24100
+      targetPort: 8000
+      nodePort: 24100
+      protocol: TCP
+    - name: kong-proxy-ssl
+      port: 24102
+      targetPort: 8444
+      nodePort: 24102
+      protocol: TCP
+    - name: admin-proxy
+      port: 24101
+      targetPort: 8001
+      nodePort: 24101
+      protocol: TCP
+  selector:
+    app: kong-zbb
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kong-zbb
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kong-zbb
+    spec:
+      containers:
+        - name: kong-zbb
+          image: {{KONG_1.0.0}}
+          env:
+            - name: KONG_ADMIN_LISTEN
+              value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
+            - name: KONG_DATABASE
+              value: postgres
+            - name: KONG_PG_USER
+              value: kong
+            - name: KONG_PG_PASSWORD
+              value: kong
+            - name: KONG_PG_HOST
+              value: postgres-zbb.default.svc
+            - name: KONG_PROXY_ACCESS_LOG
+              value: "/dev/stdout"
+            - name: KONG_ADMIN_ACCESS_LOG
+              value: "/dev/stdout"
+            - name: KONG_PROXY_ERROR_LOG
+              value: "/dev/stderr"
+            - name: KONG_ADMIN_ERROR_LOG
+              value: "/dev/stderr"
+            - name: KONG_LOG_LEVEL
+              value: info
+            - name: KONG_PLUGINS
+              value: "bundled"
+          ports:
+            - name: admin
+              containerPort: 8001
+              protocol: TCP
+            - name: proxy
+              containerPort: 8000
+              protocol: TCP
+            - name: proxy-ssl
+              containerPort: 8443
+              protocol: TCP
+            - name: admin-ssl
+              containerPort: 8444
+              protocol: TCP
+          securityContext:
+            privileged: true

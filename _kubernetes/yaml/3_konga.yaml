@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: konga
+spec:
+  type: NodePort
+  ports:
+    - name: konga
+      port: 1337
+      targetPort: 1337
+      nodePort: 1337
+      protocol: TCP
+  selector:
+    app: konga
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: konga
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: konga
+        app: konga
+    spec:
+      containers:
+        - name: konga
+          image: pantsel/konga:0
+          env:
+            - name: DB_ADAPTER
+              value: mysql
+            - name: DB_HOST
+              value: mysql.default.svc
+            - name: DB_PORT
+              value: '3306'
+            - name: DB_USER
+              value: root
+            - name: DB_PASSWORD
+              value: cloudos
+            - name: DB_DATABASE
+              value: konga
+          ports:
+            - name: admin
+              containerPort: 1337
+              protocol: TCP
+          securityContext:
+            privileged: true
