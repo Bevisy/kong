@@ -4,7 +4,7 @@ local kong = kong
 return {
   ["/cache/:key"] = {
     GET = function(self)
-      -- probe the cache to see if a key has been requested before
+      -- probe(探测) the cache to see if a key has been requested before
 
       local ttl, err, value = kong.cache:probe(self.params.key)
       if err then
