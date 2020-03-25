@@ -1,5 +1,5 @@
 return {
   tables = {
-    "h3c-ratelimiting_metrics"
+    "h3c_ratelimiting_metrics"
   },
 }
