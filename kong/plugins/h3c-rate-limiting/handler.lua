@@ -40,6 +40,7 @@ local function get_identifier(conf)
   return identifier or kong.client.get_forwarded_ip()
 end
 
+--查看已允许访问次数
 local function get_usage(conf, identifier, current_timestamp, limits)
   local usage = {}
   local stop
@@ -67,12 +68,43 @@ local function get_usage(conf, identifier, current_timestamp, limits)
   return usage, stop
 end
 
+----查看总访问次数
+--local function get_usage_counts(conf, identifier, current_timestamp, limits)
+--  local usage_counts = {}
+--  local stop
+--
+--  for period, limit in pairs(limits) do
+--    local current_usage_counts, err = policies[conf.policy].usage_counts(conf, identifier, period, current_timestamp)
+--    if err then
+--      return nil, nil, err
+--    end
+--
+--    -- Recording usage
+--    usage_counts[period] = {
+--      current_usage_counts = current_usage_counts,
+--    }
+--
+--  end
+--
+--  return usage_counts
+--end
+
+--增加拦截次数
 local function increment(premature, conf, ...)
   if premature then
     return
   end
 
   policies[conf.policy].increment(conf, ...)
+end
+
+--增加访问总访问次数
+local function increment_counts(premature, conf, ...)
+  if premature then
+    return
+  end
+
+  policies[conf.policy].increment_counts(conf, ...)
 end
 
 local noop = function()
@@ -229,6 +261,21 @@ local function rateLimiting(conf)
     -- If limit is exceeded, terminate the request
     if stop then
 
+      --增加访问次数
+      --kong.ctx.plugin.timer_counts = function()
+      --  local ok, err = timer_at(0, increment_counts, conf, limits, identifier, current_timestamp, 1)
+      --  if not ok then
+      --    kong.log.err("failed to create timer: ", err)
+      --  end
+      --end
+
+      kong.ctx.plugin.timer = function()
+        local ok, err = timer_at(0, increment, conf, limits, identifier, current_timestamp, 0, 1)
+        if not ok then
+          kong.log.err("failed to create timer: ", err)
+        end
+      end
+
       local status = conf.status_code
       local content = conf.body
 
@@ -249,11 +296,18 @@ local function rateLimiting(conf)
   end
 
   kong.ctx.plugin.timer = function()
-    local ok, err = timer_at(0, increment, conf, limits, identifier, current_timestamp, 1)
+    local ok, err = timer_at(0, increment, conf, limits, identifier, current_timestamp, 1, 1)
     if not ok then
       kong.log.err("failed to create timer: ", err)
     end
   end
+
+  --kong.ctx.plugin.timer_counts = function()
+  --  local ok, err = timer_at(0, increment_counts, conf, limits, identifier, current_timestamp, 1)
+  --  if not ok then
+  --    kong.log.err("failed to create timer: ", err)
+  --  end
+  --end
 
 end
 
@@ -276,6 +330,10 @@ function H3cRateLimitingHandler:log(_)
   if kong.ctx.plugin.timer then
     kong.ctx.plugin.timer()
   end
+
+  --if kong.ctx.plugin.timer_counts then
+  --  kong.ctx.plugin.timer_counts()
+  --end
 end
 
 return H3cRateLimitingHandler

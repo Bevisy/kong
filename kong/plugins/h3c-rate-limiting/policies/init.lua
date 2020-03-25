@@ -88,14 +88,14 @@ return {
     end
   },
   ["cluster"] = {
-    increment = function(conf, limits, identifier, current_timestamp, value)
+    increment = function(conf, limits, identifier, current_timestamp, value, counts)
       local db = kong.db
       local service_id, route_id = get_service_and_route_ids(conf)
       local policy = policy_cluster[db.strategy]
 
       local ok, err = policy.increment(db.connector, limits, identifier,
                                        current_timestamp, service_id, route_id,
-                                       value)
+                                       value, counts)
 
       if not ok then
         kong.log.err("cluster policy: could not increment ", db.strategy,

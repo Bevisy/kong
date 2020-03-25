@@ -72,7 +72,7 @@ return {
     end,
   },
   postgres = {
-    increment = function(connector, limits, identifier, current_timestamp, service_id, route_id, value)
+    increment = function(connector, limits, identifier, current_timestamp, service_id, route_id, value, counts)
       local buf = { "BEGIN" }
       local len = 1
       local periods = timestamp.get_timestamps(current_timestamp)
@@ -81,11 +81,11 @@ return {
         if limits[period] then
           len = len + 1
           buf[len] = fmt([[
-            INSERT INTO "h3c_ratelimiting_metrics" ("identifier", "period", "period_date", "service_id", "route_id", "value")
-                 VALUES ('%s', '%s', TO_TIMESTAMP('%s') AT TIME ZONE 'UTC', '%s', '%s', %d)
+            INSERT INTO "h3c_ratelimiting_metrics" ("identifier", "period", "period_date", "service_id", "route_id", "value", "counts")
+                 VALUES ('%s', '%s', TO_TIMESTAMP('%s') AT TIME ZONE 'UTC', '%s', '%s', %d, %d)
             ON CONFLICT ("identifier", "period", "period_date", "service_id", "route_id") DO UPDATE
-                    SET "value" = "h3c_ratelimiting_metrics"."value" + EXCLUDED."value"
-          ]], identifier, period, floor(period_date / 1000), service_id, route_id, value)
+                    SET "value" = "h3c_ratelimiting_metrics"."value" + EXCLUDED."value", "counts" = "h3c_ratelimiting_metrics"."counts" + EXCLUDED."counts"
+          ]], identifier, period, floor(period_date / 1000), service_id, route_id, value, counts)
         end
       end
 
@@ -112,6 +112,27 @@ return {
 
       local sql = fmt([[
         SELECT "value"
+          FROM "h3c_ratelimiting_metrics"
+         WHERE "identifier" = '%s'
+           AND "period" = '%s'
+           AND "period_date" = TO_TIMESTAMP('%s') AT TIME ZONE 'UTC'
+           AND "service_id" = '%s'
+           AND "route_id" = '%s'
+         LIMIT 1;
+      ]], identifier, period, floor(periods[period] / 1000), service_id, route_id)
+
+      local res, err = connector:query(sql)
+      if not res or err then
+        return nil, err
+      end
+
+      return res[1]
+    end,
+    find_counts = function(connector, identifier, period, current_timestamp, service_id, route_id)
+      local periods = timestamp.get_timestamps(current_timestamp)
+
+      local sql = fmt([[
+        SELECT "counts"
           FROM "h3c_ratelimiting_metrics"
          WHERE "identifier" = '%s'
            AND "period" = '%s'

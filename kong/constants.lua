@@ -34,6 +34,9 @@ local plugins = {
   "prometheus",
   "proxy-cache",
   "session",
+  "h3c-rate-limiting",
+  "h3c-request-termination",
+  "h3c-dynamic-routing"
 }
 
 local plugin_map = {}

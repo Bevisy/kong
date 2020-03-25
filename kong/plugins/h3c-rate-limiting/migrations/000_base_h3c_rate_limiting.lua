@@ -9,6 +9,7 @@ return {
         "route_id"     UUID                         NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'::UUID,
         "api_id"       UUID                         NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'::UUID,
         "value"        INTEGER,
+        "counts"       INTEGER,
 
         PRIMARY KEY ("identifier", "period", "period_date", "service_id", "route_id", "api_id")
       );
