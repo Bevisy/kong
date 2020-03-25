@@ -224,7 +224,7 @@ local function poll(self)
 
   local max_at = ngx_now()
 
-  log(DEBUG, "polling events from: ", min_at, " to: ", max_at)
+  --log(DEBUG, "polling events from: ", min_at, " to: ", max_at)
 
   for rows, err, page in self.strategy:select_interval(self.channels, min_at, max_at) do
     if err then
