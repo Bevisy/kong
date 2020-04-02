@@ -11,9 +11,9 @@ spec:
       nodePort: 8000
       protocol: TCP
     - name: kong-proxy-ssl
-      port: 8444
-      targetPort: 8444
-      nodePort: 8444
+      port: 8443
+      targetPort: 8443
+      nodePort: 8443
       protocol: TCP
     - name: admin-proxy
       port: 8001
@@ -30,28 +30,31 @@ metadata:
   name: kong-zbb
   labels:
     app: kong
+  namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kong
+      app: kong-zbb
   template:
     metadata:
       labels:
         app: kong-zbb
+      name: kong-zbb
+      namespace: default
     spec:
       containers:
         - name: kong-zbb
           image: {{KONG_1.0.0}}
           env:
             - name: KONG_ANONYMOUS_REPORTS
-              value: off
+              value: "off"
             - name: KONG_NGINX_WORKER_PROCESSES
               value: "2"
             - name: KONG_ADMIN_LISTEN
               value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
             - name: KONG_DATABASE
-              value: off
+              value: "off"
             - name: KONG_PROXY_ACCESS_LOG
               value: "/dev/stdout"
             - name: KONG_ADMIN_ACCESS_LOG
@@ -65,7 +68,7 @@ spec:
             - name: KONG_PLUGINS
               value: bundled
             - name: KONG_DECLARATIVE_CONFIG
-              value: /usr/local/kong/declarative/kong.yml
+              value: /usr/local/kong/kong.yml
           ports:
             - name: admin
               containerPort: 8001
@@ -79,6 +82,35 @@ spec:
             - name: admin-ssl
               containerPort: 8444
               protocol: TCP
+          volumeMounts:
+            - mountPath: /usr/local/kong/kong.yml
+              subPath: kong.yml
+              name: kong-dbless
           securityContext:
             privileged: true
+      volumes:
+        - name: kong-dbless
+          configMap:
+            name: cm-kong-dbless
+            items:
+              - key: kong.yml
+                path: kong.yml
+---
+apiVersion: v1
+data:
+  kong.yml: |
+    _format_version: "1.1"
 
+    services:
+    - name: testmock1
+      url: http://mockbin.com/request
+      tags:
+      - example
+      routes:
+      - name: test1
+        paths:
+        - /mockbin
+kind: ConfigMap
+metadata:
+  name: cm-kong-dbless
+  namespace: default
