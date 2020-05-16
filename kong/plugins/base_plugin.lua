@@ -35,7 +35,8 @@ if subsystem == "http" then
     ngx_log(DEBUG, "executing plugin \"", self._name, "\": header_filter")
   end
 
-  -- 从上游服务接收的响应主体的每个块执行。由于响应被流回客户端，因此它可以超过缓冲区大小并按块进行流式传输。因此如果响应很大，则会多次调用此方法
+  -- 从上游服务接收的响应主体的每个块执行。由于响应被流回客户端，因此它可以超过缓冲区大小并按块进行流式传输。
+  -- 因此如果响应很大，则会多次调用此方法
   function BasePlugin:body_filter()
     ngx_log(DEBUG, "executing plugin \"", self._name, "\": body_filter")
   end
