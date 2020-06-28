@@ -8,22 +8,24 @@ POSTGRES_C_NAME=kong-database
 POSTGRES_PORT=5432
 POSTGRES_PASSWORD=cloudos
 POSTGRES_DATA_PATH=pgdata
+HOST_IP=172.29.33.140
 
 # prepare container images
 function prepare() {
-    docker pull kong:${KONG_VERSION} postgres:${POSTGRES_VERSION}
+    docker pull kong:${KONG_VERSION}
+    docker pull postgres:${POSTGRES_VERSION}
 }
 
 # install postgres
 function start_potgres() {
-    mkdir -p ${POSTGRES_DATA_PATH}
+#    mkdir -p ${POSTGRES_DATA_PATH}
 
     docker run -d --name ${POSTGRES_C_NAME} \
         -p ${POSTGRES_PORT}:5432 \
         -e "POSTGRES_USER=kong" \
         -e "POSTGRES_DB=kong" \
         -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
-        -v ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data \
+        -e "PGDATA=/var/lib/postgresql/data/pgdata" \
         postgres:${POSTGRES_VERSION}
 }
 
@@ -31,7 +33,7 @@ function start_potgres() {
 function start_migration() {
     docker run -it --name migration \
         -e "KONG_DATABASE=postgres" \
-        -e "KONG_PG_HOST=${POSTGRES_C_NAME}" \
+        -e "KONG_PG_HOST=${HOST_IP}" \
         -e "KONG_PG_USER=kong" \
         -e "KONG_PG_PASSWORD=${POSTGRES_PASSWORD}" \
         kong:${KONG_VERSION} kong migrations bootstrap --vv
@@ -41,7 +43,7 @@ function start_migration() {
 function start_kong() {
     docker run -d --name kong \
      -e "KONG_DATABASE=postgres" \
-     -e "KONG_PG_HOST=${POSTGRES_C_NAME}" \
+     -e "KONG_PG_HOST=${HOST_IP}" \
      -e "KONG_PG_USER=kong" \
      -e "KONG_PG_PASSWORD=${POSTGRES_PASSWORD}" \
      -e "KONG_PROXY_ACCESS_LOG=/dev/stdout" \
