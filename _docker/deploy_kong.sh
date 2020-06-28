@@ -68,6 +68,9 @@ function main() {
 
     start_potgres
 
+    # 临时策略
+    sleep 10
+
     start_migration
 
     start_kong
